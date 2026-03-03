@@ -1,21 +1,189 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>天使的个人空间</title>
+    <title>😇 Angel 的梦幻空间</title>
     <style>
-        body { margin: 0; background: #f0f9ff; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; }
-        .card { background: white; padding: 40px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; border: 2px solid #bae6fd; }
-        h1 { color: #0369a1; font-size: 2.5rem; }
-        .icon { font-size: 4rem; }
+        :root {
+            --primary-color: #a1c4fd;
+            --accent-color: #c2e9fb;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0;
+            height: 100vh;
+            overflow: hidden; /* 防止羽毛导致滚动条 */
+            background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('angel.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* ---------------- 花样 1：更高级的毛玻璃卡片 ---------------- */
+        .card { 
+            background: rgba(255, 255, 255, 0.15);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            text-align: center;
+            max-width: 450px;
+            color: white;
+            animation: fadeIn 1.5s ease-out;
+            z-index: 10;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 { 
+            margin-top: 0;
+            font-size: 2.5em;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            background: linear-gradient(to right, #fff, #e0e0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* ---------------- 花样 2：音乐旋转唱片视觉 ---------------- */
+        .music-disk {
+            width: 100px;
+            height: 100px;
+            margin: 20px auto;
+            border-radius: 50%;
+            border: 5px solid rgba(255,255,255,0.5);
+            background: url('https://cdn-icons-png.flaticon.com/512/3612/3612301.png') center/cover;
+            transition: transform 0.5s;
+        }
+
+        .playing .music-disk {
+            animation: rotate 5s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* ---------------- 按钮美化 ---------------- */
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
+        }
+
+        /* ---------------- 花样 3：羽毛飘落效果 ---------------- */
+        .feather {
+            position: absolute;
+            top: -50px;
+            color: white;
+            font-size: 20px;
+            user-select: none;
+            pointer-events: none;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(360deg); }
+        }
     </style>
 </head>
 <body>
-    <div class="card">
-        <div class="icon">😇</div>
-        <h1>天使</h1>
-        <p>我的网页正式上线了！</p>
+
+    <div class="card" id="mainCard">
+        <div class="music-disk"></div>
+        <h1>Angel's Haven</h1>
+        <p style="font-style: italic; opacity: 0.9;">“愿你的灵魂在此得到片刻安宁”</p>
+        
+        <audio id="bgMusic" loop>
+            <source src="After17.mp3" type="audio/mpeg">
+        </audio>
+        
+        <div class="controls">
+            <button onclick="toggleMusic()" id="playBtn">🎵 开启疗愈</button>
+            <button onclick="changeVolume(0.1)">🔊 加大音量</button>
+            <button onclick="changeVolume(-0.1)">🔉 减小音量</button>
+            <button onclick="pauseMusic()">⏸️ 暂停</button>
+        </div>
     </div>
+
+    <script>
+        const music = document.getElementById('bgMusic');
+        const card = document.getElementById('mainCard');
+        const playBtn = document.getElementById('playBtn');
+
+        // 切换播放/暂停
+        function toggleMusic() {
+            if (music.paused) {
+                music.play();
+                card.classList.add('playing');
+                playBtn.innerText = "🎶 正在播放";
+            } else {
+                pauseMusic();
+            }
+        }
+
+        function pauseMusic() {
+            music.pause();
+            card.classList.remove('playing');
+            playBtn.innerText = "🎵 继续播放";
+        }
+
+        function changeVolume(amount) {
+            music.volume = Math.max(0, Math.min(1, music.volume + amount));
+        }
+
+        // ---------------- 花样：自动生成飘落羽毛 ----------------
+        function createFeather() {
+            const feather = document.createElement('div');
+            feather.classList.add('feather');
+            feather.innerText = '🪶'; // 天使羽毛符号
+            feather.style.left = Math.random() * 100 + 'vw';
+            feather.style.animationDuration = Math.random() * 3 + 2 + 's'; // 2-5秒落下
+            feather.style.opacity = Math.random() * 0.5 + 0.3;
+            feather.style.fontSize = Math.random() * 15 + 15 + 'px';
+            
+            document.body.appendChild(feather);
+
+            // 动画结束后移除，防止占用内存
+            setTimeout(() => {
+                feather.remove();
+            }, 5000);
+        }
+
+        // 每 300 毫秒产生一片羽毛
+        setInterval(createFeather, 400);
+
+        // 首次点击页面自动激活羽毛和音乐逻辑（兼容浏览器政策）
+        document.addEventListener('click', () => {
+            if (music.paused && !card.classList.contains('playing')) {
+                // 不强制自动播放，但可以在此处预留交互
+            }
+        }, { once: true });
+    </script>
 </body>
 </html>
